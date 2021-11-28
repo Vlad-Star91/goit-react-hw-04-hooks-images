@@ -1,6 +1,6 @@
 import './App.css';
 import '../../styles/styles.css';
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Searchbar } from '../Searchbar/Searchbar.jsx';
 import { Modal } from '../Modal/Modal.jsx';
 import { ImageGallery } from '../ImageGallery/ImageGallery';
@@ -31,12 +31,15 @@ export default function App() {
     setPictures(pictures);
   }, [pictures]);
   const isFirstRun = useRef(true);
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
     }
-  });
+    if (pictures.length === 0) {
+      showMessage();
+    }
+  }, [pictures]);
   const getData = (request, page, target) => {
     GetImagesApi(request, page)
       .then(response => {
@@ -44,9 +47,9 @@ export default function App() {
           if (target === 'searchBtn') {
             setPictures([...response.data.hits]);
           }
-          if (response.data.hits.length === 0) {
-            toast.error('Error request!');
-          }
+          // if (response.data.hits.length === 0) {
+          //   toast.error('Error request!');
+          // }
           if (target === 'loadMoreBtn') {
             setPictures([...pictures, ...response.data.hits]);
           }
@@ -59,6 +62,9 @@ export default function App() {
       .finally(() => {
         scrollPageDown();
       });
+  };
+  const showMessage = () => {
+    toast.error('Error request!');
   };
 
   const handleFormSubmit = request => {
