@@ -10,6 +10,7 @@ import { Load } from '../Loader/Loader.jsx';
 import scrollPageDown from '../../js/scrollPageDown';
 
 import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,6 @@ export default function App() {
     getData(searchRequest, page, 'loadMoreBtn');
   }, [page]);
   useEffect(() => {
-    console.log('starting useEffect' + Date.now());
     setPictures(pictures);
   }, [pictures]);
   const isFirstRun = useRef(true);
@@ -44,6 +44,9 @@ export default function App() {
           if (target === 'searchBtn') {
             setPictures([...response.data.hits]);
           }
+          if (response.data.hits.length === 0) {
+            toast.error('Error request!');
+          }
           if (target === 'loadMoreBtn') {
             setPictures([...pictures, ...response.data.hits]);
             scrollPageDown();
@@ -53,14 +56,12 @@ export default function App() {
           throw new Error(response.message || 'pictures not exist');
         }
       })
-      .then(() => this.setState({ loading: false }))
-      .catch(function (error) {
-        console.error('error', error);
-      })
+      .then(() => setLoading(false))
       .finally(() => {
         scrollPageDown();
       });
   };
+
   const handleFormSubmit = request => {
     setLoading(true);
     setSearchRequest(request);
