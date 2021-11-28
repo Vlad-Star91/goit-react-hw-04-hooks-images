@@ -23,16 +23,13 @@ export default function App() {
   useEffect(() => {
     getData(searchRequest, page, 'searchBtn');
   }, [searchRequest]);
-
   useEffect(() => {
     getData(searchRequest, page, 'loadMoreBtn');
   }, [page]);
-
   useEffect(() => {
     console.log('starting useEffect' + Date.now());
     setPictures(pictures);
   }, [pictures]);
-
   const isFirstRun = useRef(true);
   useLayoutEffect(() => {
     if (isFirstRun.current) {
@@ -40,7 +37,6 @@ export default function App() {
       return;
     }
   });
-
   const getData = (request, page, target) => {
     GetImagesApi(request, page)
       .then(response => {
@@ -57,14 +53,14 @@ export default function App() {
           throw new Error(response.message || 'pictures not exist');
         }
       })
+      .then(() => this.setState({ loading: false }))
       .catch(function (error) {
         console.error('error', error);
       })
-      .then(() => {
-        setLoading(false);
+      .finally(() => {
+        scrollPageDown();
       });
   };
-
   const handleFormSubmit = request => {
     setLoading(true);
     setSearchRequest(request);
@@ -87,7 +83,6 @@ export default function App() {
       setAlt(alt);
     }
   };
-
   return (
     <div className="App">
       <ToastContainer autoClose={2000} newestOnTop={true} />
