@@ -49,7 +49,6 @@ export default function App() {
           }
           if (target === 'loadMoreBtn') {
             setPictures([...pictures, ...response.data.hits]);
-            scrollPageDown();
           }
         }
         if (response.status === 404) {
